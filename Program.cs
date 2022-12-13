@@ -16,6 +16,7 @@ namespace MooGame
 
 			while (playOn)
 			{
+                // Game init.
 				string goal = makeGoal();
 
 				
@@ -27,6 +28,7 @@ namespace MooGame
 				int nGuess = 1;
 				string bbcc = checkBC(goal, guess);
 				Console.WriteLine(bbcc + "\n");
+                // "Main" game loop.
 				while (bbcc != "BBBB,")
 				{
 					nGuess++;
@@ -35,6 +37,8 @@ namespace MooGame
 					bbcc = checkBC(goal, guess);
 					Console.WriteLine(bbcc + "\n");
 				}
+
+                // Save result, display toplist, check if run again.
 				StreamWriter output = new StreamWriter("result.txt", append: true);
 				output.WriteLine(name + "#&#" + nGuess);
 				output.Close();
@@ -67,6 +71,8 @@ namespace MooGame
 
 		static string checkBC(string goal, string guess)
 		{
+            // B, Bull = Correct guess
+            // C, Cow = Incorrect guess
 			int cows = 0, bulls = 0;
 			guess += "    ";     // if player entered less than 4 chars
 			for (int i = 0; i < 4; i++)
