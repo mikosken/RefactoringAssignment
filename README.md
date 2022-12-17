@@ -2,7 +2,46 @@
 
 The code in this repository is based on an assignment in refactoring and code smells.
 
-## Refactoring changes and resoning
+## Refactoring changes and reasoning
+
+### Notes on original code.
+
+#### An example run
+
+My comments are preceeded by #
+
+```
+Enter your user name:
+
+John Smith
+New game:
+
+For practice, number is: 3178
+
+2       # First input.
+,       # Nothing correct.
+
+1234    # Second input
+1234    # Note that after the first input the input is echoed back.
+
+,CC     # Two numbers correct, in wrong places.
+
+1111
+1111
+
+B,CCC   # One of the 1 is in the correct spot.
+
+3178
+3178
+
+BBBB,
+
+Player   games average
+John Smith    1     4,00
+Correct, it took 4 guesses
+Continue?
+n
+```
 
 ### Game Class and Game Loop
 
@@ -15,11 +54,44 @@ A game usually has:
 -   continues from one state to the next
 
 Displaying the state and retrieving input should be separated from the main game
-logic.
+logic using dependency injection.
 
 By putting the game logic into it's own class with a defined interface, `IGame`,
 a new game can easily be instantiated, and it can also be swapped with a
 different game using the same interface.
+
+### Wrapping System.Console
+
+To make console input and output testable, as well as enable dependency
+injection of the console IO, a wrapper interface was created: `IConsoleIO`.
+
+### Dependency Injection
+
+The core of Dependency Injection is that each class should only be concerned
+with implementing one specific thing, and any secondary/external functionality
+it needs should be **injected** and implemented elsewhere.
+
+In dotnet this is usually accomplished by using Constructor Injection, where
+all required dependencies are injected in the constructor on creation.
+
+Where do the dependencies come from at runtime then? The dependencies are
+usually specified early in the `Main()` method, or in a startup method called
+from `Main()`.
+
+A standard approach is to use the `Microsoft.Extensions.DependencyInjection`
+package, create a service provider, and add all dependencies to the service
+provider. The service provider then takes care of handling which dependency
+goes where.
+
+Dependencies are added with differing scopes:
+
+-   Singleton: After initializing the requested dependency once it's kept in
+    memory and reused until the application shuts down.
+-   Scoped: A new instance of the dependency is created every time a new scope
+    is created. (Create new scope, get new service provider from scope, get
+    dependency from service provider.)
+-   Transient: A new instance of the dependency is created every time that
+    dependency is requested.
 
 ## Getting Started
 
@@ -47,3 +119,4 @@ dotnet watch run
 Inspiration, code snippets, etc.
 
 -   [Example](https://example.com/)
+-   [Using dependency injection in a dotNet Core Console App](https://andrewlock.net/using-dependency-injection-in-a-net-core-console-application/)

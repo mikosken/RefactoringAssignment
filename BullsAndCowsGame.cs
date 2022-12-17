@@ -5,87 +5,19 @@ using System.Threading.Tasks;
 
 namespace MyNaiveGameEngine
 {
-    public class BullsAndCowsGameState
-    {
 
-        // See property Guesses for external access.
-        private List<string> guesses = new List<string>();
-        
-        public string Target { get; set; } = "";
-
-        /// <summary>
-        /// Initializes a new game of Bulls and Cows.
-        /// </summary>
-        public BullsAndCowsGameState()
-        {
-        }
-
-        /// <summary>
-        /// Use this constructor to load an existing gamestate.
-        /// </summary>
-        /// <param name="state"></param>
-        public BullsAndCowsGameState(BullsAndCowsGameState state)
-        {
-            Target = state.Target;
-            this.guesses = state.Guesses.ToList();
-        }
-
-
-        /// <summary>
-        /// True if end condition has been met.
-        /// </summary>
-        public bool Success
-        {
-            get
-            {
-                return Guesses.Contains(Target);
-            }
-        }
-
-        /// <summary>
-        /// Number of tries until first correct guess (in case you somehow
-        /// were allowed to continue after getting a correct guess).
-        /// 0 if no correct guess has been made.
-        /// </summary>
-        public int TryCountOnFirstSuccess
-        {
-            get
-            {
-                var triesBeforeCorrect = Guesses.TakeWhile(t => !(t == Target)).Count();
-                return triesBeforeCorrect + 1;
-            }
-        }
-
-        public IReadOnlyList<string> Guesses
-        {
-            get
-            {
-                return this.guesses.AsReadOnly();
-            }
-        }
-
-        /// <summary>
-        /// Attempt a new guess.
-        /// </summary>
-        /// <param name="guess"></param>
-        /// <returns>True if guess succeeded.</returns>
-        public bool Guess(string guess) {
-            this.guesses.Add(guess);
-            return Success;
-        }
-    }
-
-    public class BullsAndCowsGame : IGame<BullsAndCowsGameState>
+    public class BullsAndCowsGame : IGame
     {
         private readonly string allowedCharacters = "1234567890";
         private readonly int numberOfCharactersInTarget = 4;
         private readonly int maxCharactersInInput = 4;
-
+        private readonly IConsoleIO _consoleIO;
         private BullsAndCowsGameState state = new BullsAndCowsGameState();
         private string latestInput = "";
 
-        public BullsAndCowsGame()
+        public BullsAndCowsGame(IConsoleIO consoleIO)
         {
+            _consoleIO = consoleIO;
         }
 
         /// <summary>
@@ -98,7 +30,7 @@ namespace MyNaiveGameEngine
             latestInput = (input ?? "").PadRight(maxCharactersInInput).Substring(0,maxCharactersInInput);
         }
 
-        BullsAndCowsGameState IGame<BullsAndCowsGameState>.GetState()
+        public IGameState GetState()
         {
             return this.state;
         }
@@ -114,7 +46,7 @@ namespace MyNaiveGameEngine
         /// <summary>
         /// Initialize a new game.
         /// </summary>
-        void IGame<BullsAndCowsGameState>.Initialize()
+        public void Initialize()
         {
             // Note, Initialize() clears all state.
             this.state = new BullsAndCowsGameState();
@@ -126,29 +58,42 @@ namespace MyNaiveGameEngine
             return;
         }
 
-        void IGame<BullsAndCowsGameState>.LoadState(BullsAndCowsGameState state)
+        public void LoadState(IGameState state)
         {
-            this.state = new BullsAndCowsGameState(state);
+            if (state is BullsAndCowsGameState)
+                this.state = new BullsAndCowsGameState((BullsAndCowsGameState)state);
+            else
+                throw new ArgumentException($"'state' should be of type {typeof(BullsAndCowsGameState)}");
         }
 
-        // MOVE THIS TO A DISPLAY MANAGER FOR BULLS AND COWS GAME
-        public string GuessResultAsString() {
-            var target = this.state.Target ?? "";
-            var latestGuess = this.state.Guesses.LastOrDefault() ?? "";
+        public void GetInput()
+        {
+            this.latestInput = _consoleIO.ReadLine();
+        }
 
-            var correctItemCorrectPlace = 0;
-            var correctItemWrongPlace = 0;
+        public void DisplayState()
+        {
+            _consoleIO.WriteLine(this.state.ToString() + "\n");
+        }
 
-            for (int i = 0; i < latestGuess.Count(); i++) {
-                if (i < target.Count() && target[i] == latestGuess[i]) {
-                    correctItemCorrectPlace += 1;
-                } else {
-                    correctItemWrongPlace += target.Contains(latestGuess[i]) ? 1 : 0;
-                }
+        public void Run()
+        {
+            _consoleIO.WriteLine("New game:\n");
+            //comment out or remove next line to play real games!
+            _consoleIO.WriteLine("For practice, number is: " + state.Target + "\n");
+            // In the original code the first run does not echo back input.
+            // That's why we have an initial round outside the while loop.
+            (this as IGame).GetInput();
+            (this as IGame).Step();
+            (this as IGame).DisplayState();
+
+            while (!this.state.Success)
+            {
+                (this as IGame).GetInput();
+                _consoleIO.WriteLine(latestInput + "\n");
+                (this as IGame).Step();
+                (this as IGame).DisplayState();
             }
-            var bulls = new String('B', correctItemCorrectPlace);
-            var cows = new String('C', correctItemWrongPlace);
-            return $"{bulls},{cows}";
         }
     }
 }

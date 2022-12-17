@@ -1,6 +1,6 @@
 namespace MyNaiveGameEngine
 {
-    public interface IGame<T>
+    public interface IGame
     {
         /// <summary>
         /// This is called first before anything else in your game.
@@ -12,7 +12,7 @@ namespace MyNaiveGameEngine
         /// Load an existing gamestate.
         /// </summary>
         /// <param name="state"></param>
-        void LoadState(T state);
+        void LoadState(IGameState state);
 
         /// <summary>
         /// Run the game for one game step, changes game state.
@@ -21,7 +21,7 @@ namespace MyNaiveGameEngine
         void Step();
 
         /// <summary>
-        /// Add new input. It is up to the game implementation to determine if
+        /// Add new input proactively. It is up to the game implementation to determine if
         /// multiple inputs can be queued, or if only the last input is used
         /// upon Step().
         /// </summary>
@@ -29,10 +29,25 @@ namespace MyNaiveGameEngine
         void AddInput(string input);
 
         /// <summary>
+        /// Ask user actively for input.
+        /// </summary>
+        void GetInput();
+
+        /// <summary>
+        /// Show the current state to the user.
+        /// </summary>
+        void DisplayState();
+
+        /// <summary>
         /// Returns the current state of the game. It is up to the
         /// displayManager to figure out how to display it.
         /// </summary>
         /// <returns><c>T</c> may be a game specific state representation.</returns>
-        T GetState();
+        IGameState GetState();
+
+        /// <summary>
+        /// Starts the game loop.
+        /// </summary>
+        void Run();
     }
 }

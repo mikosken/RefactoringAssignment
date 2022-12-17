@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using MyNaiveGameEngine;
 
 namespace MooGame
@@ -11,54 +12,25 @@ namespace MooGame
 		public static void Main(string[] args)
 		{
 
+            // Setup Dependency Injection
+            var serviceProvider = new ServiceCollection()
+                .AddSingleton<IConsoleIO, ConsoleIO>()
+                .AddTransient<BullsAndCowsGame>()
+                .BuildServiceProvider();
+
 			bool playOn = true;
 			Console.WriteLine("Enter your user name:\n");
 			string name = Console.ReadLine();
 
 			while (playOn)
 			{
-                // Game init.
-				// string goal = makeGoal();
-                //IGame<BullsAndCowsGameState> game = new BullsAndCowsGame();
-                IGame<BullsAndCowsGameState> game = new BullsAndCowsGame();
+                var game = serviceProvider.GetService<BullsAndCowsGame>();
                 game.Initialize();
-
-                string goal = game.GetState().Target.ToString();
-
-				
-				Console.WriteLine("New game:\n");
-				//comment out or remove next line to play real games!
-				Console.WriteLine("For practice, number is: " + goal + "\n");
-				string guess = Console.ReadLine();
-				
-				// int nGuess = 1;
-				//string bbcc = checkBC(goal, guess);
-				//Console.WriteLine(bbcc + "\n");
-                
-                //bbcc = checkBC(goal, guess);
-                game.AddInput(guess);
-                game.Step();
-                var refacBBCC = ((BullsAndCowsGame)game).GuessResultAsString();
-                Console.WriteLine(refacBBCC + "\n");
-                
-                // "Main" game loop.
-				while (!game.GetState().Success)
-				{
-					guess = Console.ReadLine();
-					Console.WriteLine(guess + "\n");
-                    //bbcc = checkBC(goal, guess);
-					//Console.WriteLine(bbcc + "\n");
-
-                    game.AddInput(guess);
-                    game.Step();
-                    refacBBCC = ((BullsAndCowsGame)game).GuessResultAsString();
-                    Console.WriteLine(refacBBCC + "\n");
-				}
-                var nGuess = game.GetState().TryCountOnFirstSuccess;
-                // UNCHANGED BELOW.
+                game.Run();
+                var nGuess = ((BullsAndCowsGameState)game.GetState()).TryCountOnFirstSuccess;
 
                 // Save result, display toplist, check if run again.
-				StreamWriter output = new StreamWriter("result.txt", append: true);
+                StreamWriter output = new StreamWriter("result.txt", append: true);
 				output.WriteLine(name + "#&#" + nGuess);
 				output.Close();
 				showTopList();
@@ -70,50 +42,6 @@ namespace MooGame
 				}
 			}
 		}
-		static string makeGoal()
-		{
-			Random randomGenerator = new Random();
-			string goal = "";
-			for (int i = 0; i < 4; i++)
-			{
-				int random = randomGenerator.Next(10);
-				string randomDigit = "" + random;
-				while (goal.Contains(randomDigit))
-				{
-					random = randomGenerator.Next(10);
-					randomDigit = "" + random;
-				}
-				goal = goal + randomDigit;
-			}
-			return goal;
-		}
-
-		static string checkBC(string goal, string guess)
-		{
-            // B, Bulls = Correct guess, right place
-            // C, Cows = Correct guess, wrong place
-			int cows = 0, bulls = 0;
-			guess += "    ";     // if player entered less than 4 chars
-			for (int i = 0; i < 4; i++)
-			{
-				for (int j = 0; j < 4; j++)
-				{
-					if (goal[i] == guess[j])
-					{
-						if (i == j)
-						{
-							bulls++;
-						}
-						else
-						{
-							cows++;
-						}
-					}
-				}
-			}
-			return "BBBB".Substring(0, bulls) + "," + "CCCC".Substring(0, cows);
-		}
-
 
 		static void showTopList()
 		{
