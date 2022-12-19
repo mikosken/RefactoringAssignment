@@ -43,10 +43,45 @@ Continue?
 n
 ```
 
+### Files and folders.
+
+The final refactored code was split in three separate subfolders:
+
+-   Interfaces
+-   Common: For the game manager, and classes that are likely to be shared
+    between multiple games.
+-   MooGame: The refactored game.
+
+### Dependency Injection
+
+The core of Dependency Injection is that each class should only be concerned
+with implementing one specific thing, and any secondary/external functionality
+it needs should be injected and implemented elsewhere.
+
+In C#/dotNet this is usually accomplished by using Constructor Injection, where
+all required dependencies are injected in the constructor on creation.
+
+A standard approach is to use the `Microsoft.Extensions.DependencyInjection`
+package, create a service provider, and add all dependencies to the service
+provider. The service provider then takes care of handling which dependency
+goes where.
+
+Dependencies are added with differing scopes:
+
+-   Singleton: After initializing the requested dependency once it's kept in
+    memory and reused until the application shuts down.
+-   Scoped: A new instance of the dependency is created every time a new scope
+    is created. (Create new scope, get new service provider from scope, get
+    dependency from service provider.)
+-   Transient: A new instance of the dependency is created every time that
+    dependency is requested.
+
 ### Game manager
 
 A game manager was implemented to handle selection of games, if multiple games
 are implemented, and for restarting games if the player wishes to continue.
+If only one game is implemented it is started immediately without prompting the
+user for a choice.
 
 ### Game Class and Game Loop
 
@@ -84,7 +119,8 @@ by the settings in `appSettings.json`.
 ### Game IO / Wrapping System.Console
 
 To make console input and output testable, as well as enable dependency
-injection of the console IO, a wrapper interface was created: `IConsoleIO`.
+injection of the console IO, a wrapper interface was created: `IGameIO`.
+This interface was then implemented as `ConsoleGameIO`.
 
 ### File handling / high score handling
 
@@ -106,34 +142,6 @@ was added to directly initialize the properties.
 To calculate statistics in the form of a list of `PlayerData`, an extension
 method called `ToToplist()` for `List<PlayerScore>` was added to a static class
 called `ToplistExtensions`.
-
-### Dependency Injection
-
-The core of Dependency Injection is that each class should only be concerned
-with implementing one specific thing, and any secondary/external functionality
-it needs should be **injected** and implemented elsewhere.
-
-In dotnet this is usually accomplished by using Constructor Injection, where
-all required dependencies are injected in the constructor on creation.
-
-Where do the dependencies come from at runtime then? The dependencies are
-usually specified early in the `Main()` method, or in a startup method called
-from `Main()`.
-
-A standard approach is to use the `Microsoft.Extensions.DependencyInjection`
-package, create a service provider, and add all dependencies to the service
-provider. The service provider then takes care of handling which dependency
-goes where.
-
-Dependencies are added with differing scopes:
-
--   Singleton: After initializing the requested dependency once it's kept in
-    memory and reused until the application shuts down.
--   Scoped: A new instance of the dependency is created every time a new scope
-    is created. (Create new scope, get new service provider from scope, get
-    dependency from service provider.)
--   Transient: A new instance of the dependency is created every time that
-    dependency is requested.
 
 ## Getting Started
 
