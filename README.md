@@ -72,6 +72,9 @@ change the setting "PracticeMode" to false.
 It's also possible to adjust the difficulty of the games in settings by changing
 allowed characters and length of target string.
 
+The setting "ScoreFile" determines where scores are stored. If two different
+filenames are given for MooGame/MastermindGame the scores are tracked separately.
+
 ### Game IO / Wrapping System.Console
 
 To make console input and output testable, as well as enable dependency
