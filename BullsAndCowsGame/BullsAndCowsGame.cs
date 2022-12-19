@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace MyNaiveGameEngine
 {
@@ -10,17 +7,19 @@ namespace MyNaiveGameEngine
     {
         // Settings. Move to GameState instead?
         // Create settings class and move to appsettings instead?
-        private readonly string scoreFile = "result.txt";
+        private readonly string configSection = "MooGame";
+        private readonly BullsAndCowsGameConfiguration _config = new BullsAndCowsGameConfiguration();
         private readonly IScoreStore _scoreStore;
         private readonly IConsoleIO _consoleIO;
-        private readonly IGameIO _gameIO;
         private BullsAndCowsGameState state = new BullsAndCowsGameState();
-        private string latestInput = "";
 
-        public BullsAndCowsGame(IConsoleIO consoleIO, IScoreStore scoreStore)
+        public BullsAndCowsGame(IConsoleIO consoleIO, IScoreStore scoreStore, IConfiguration configuration)
         {
             _consoleIO = consoleIO;
             _scoreStore = scoreStore;
+            configuration.GetSection(configSection).Bind(_config);
+
+            Initialize();
         }
 
         public IGameState GetState()
@@ -29,7 +28,20 @@ namespace MyNaiveGameEngine
         }
 
         /// <summary>
-        /// Called once before main loop of game steps.
+        /// Main game loop.
+        /// </summary>
+        public void Run()
+        {
+            FirstStep();
+            while (!this.state.Success)
+            {
+                Step();
+            }
+            LastStep();
+        }
+
+        /// <summary>
+        /// Called once before main loop.
         /// </summary>
         public void FirstStep()
         {
@@ -37,13 +49,15 @@ namespace MyNaiveGameEngine
 			this.state.PlayerName = _consoleIO.ReadLine();
 
             _consoleIO.WriteLine("New game:\n");
-            //comment out or remove next line to play real games!
-            _consoleIO.WriteLine("For practice, number is: " + state.Target + "\n");
+            if(_config.PracticeMode)
+                _consoleIO.WriteLine("For practice, number is: " + state.Target + "\n");
+            else
+                _consoleIO.WriteLine($"Guess the string. It contains {state.NumberOfCharactersInTarget} unique characters from '{state.AllowedCharacters}'.");
 
-            this.latestInput = _consoleIO.ReadLine();
             // In the original code the first run does not echo back input.
             // That's why we have an initial round outside the while loop.
-            this.state.Guess(latestInput);
+            var input = _consoleIO.ReadLine();
+            this.state.Guess(input);
             DisplayState();
         }
 
@@ -52,9 +66,9 @@ namespace MyNaiveGameEngine
         /// </summary>
         public void Step()
         {
-            this.latestInput = _consoleIO.ReadLine();
-            _consoleIO.WriteLine(latestInput + "\n");
-            this.state.Guess(latestInput);
+            var input = _consoleIO.ReadLine();
+            _consoleIO.WriteLine(input + "\n");
+            this.state.Guess(input);
             DisplayState();
         }
 
@@ -73,8 +87,7 @@ namespace MyNaiveGameEngine
         public void Initialize()
         {
             // Note, Initialize() clears all state.
-            this.state = new BullsAndCowsGameState();
-            this.state.GenerateTarget();
+            this.state = new BullsAndCowsGameState(_config.AllowedCharacters, _config.NumberOfCharactersInTarget);
             return;
         }
 
@@ -84,19 +97,6 @@ namespace MyNaiveGameEngine
                 this.state = new BullsAndCowsGameState((BullsAndCowsGameState)state);
             else
                 throw new ArgumentException($"'state' should be of type {typeof(BullsAndCowsGameState)}");
-        }
-
-        /// <summary>
-        /// Main game loop.
-        /// </summary>
-        public void Run()
-        {
-            FirstStep();
-            while (!this.state.Success)
-            {
-                Step();
-            }
-            LastStep();
         }
     }
 }

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace MyNaiveGameEngine
 {
     public partial class BullsAndCowsGame
@@ -13,7 +8,7 @@ namespace MyNaiveGameEngine
         }
 
         private void DisplayToplist() {
-            _scoreStore.LoadScores(scoreFile);
+            _scoreStore.LoadScores(_config.ScoreFile);
             var toplist = _scoreStore.Scores.ToToplist();
 
             toplist.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
@@ -25,10 +20,10 @@ namespace MyNaiveGameEngine
         }
 
         private void SaveScore() {
-            _scoreStore.LoadScores(scoreFile);
+            _scoreStore.LoadScores(_config.ScoreFile);
             var playerScore = new PlayerScore(this.state.PlayerName, this.state.TryCountOnFirstSuccess);
             _scoreStore.AddScore(playerScore);
-            _scoreStore.SaveScores(scoreFile);
+            _scoreStore.SaveScores(_config.ScoreFile);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using MyNaiveGameEngine;
+using Microsoft.Extensions.Configuration;
 
 namespace MooGame
 {
@@ -12,8 +13,14 @@ namespace MooGame
 		public static void Main(string[] args)
 		{
 
-            // Setup Dependency Injection
+            // Setup configuration and inject dependencies.
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appSettings.json", false)
+                .Build();
+            
             var serviceProvider = new ServiceCollection()
+                .AddSingleton<IConfiguration>(configuration)
                 .AddSingleton<IConsoleIO, ConsoleIO>()
                 .AddTransient<IScoreStore, FileScoreStore>()
                 .AddTransient<BullsAndCowsGame>()
@@ -24,7 +31,6 @@ namespace MooGame
 			while (playOn)
 			{
                 var game = serviceProvider.GetService<BullsAndCowsGame>();
-                game.Initialize();
                 game.Run();
                 var nGuess = ((BullsAndCowsGameState)game.GetState()).TryCountOnFirstSuccess;
 

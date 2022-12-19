@@ -69,7 +69,14 @@ The game class was then split into two partial classes.
 -   `BullsAndCowsGame.Logic.cs` contains slightly less abstract code dealing
     with supporting classes and services.
 
-### Wrapping System.Console
+### Game settings
+
+Game settings were implemented using `Microsoft.Extensions.Configuration`,
+which enables injecting `IConfiguration`.
+The game classes contain default values for properties, but these are overridden
+by the settings in `appSettings.json`.
+
+### Game IO / Wrapping System.Console
 
 To make console input and output testable, as well as enable dependency
 injection of the console IO, a wrapper interface was created: `IConsoleIO`.

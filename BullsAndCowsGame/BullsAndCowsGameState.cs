@@ -2,8 +2,8 @@ namespace MyNaiveGameEngine
 {
     public class BullsAndCowsGameState : IGameState
     {
-        private readonly string allowedCharacters = "1234567890";
-        private readonly int numberOfCharactersInTarget = 4;
+        public string AllowedCharacters { get; private set; } = "1234567890";
+        public int NumberOfCharactersInTarget { get; private set; } = 4;
 
         // See property Guesses for external access.
         private List<string> guesses = new List<string>();
@@ -17,6 +17,17 @@ namespace MyNaiveGameEngine
         /// </summary>
         public BullsAndCowsGameState()
         {
+            GenerateTarget();
+        }
+
+        /// <summary>
+        /// Initializes a new game of Bulls and Cows with custom settings.
+        /// </summary>
+        public BullsAndCowsGameState(string allowedCharacters, int numberOfCharactersInTarget)
+        {
+            AllowedCharacters = allowedCharacters;
+            NumberOfCharactersInTarget = numberOfCharactersInTarget;
+            GenerateTarget();
         }
 
         /// <summary>
@@ -25,6 +36,9 @@ namespace MyNaiveGameEngine
         /// <param name="state"></param>
         public BullsAndCowsGameState(BullsAndCowsGameState state)
         {
+            AllowedCharacters = state.AllowedCharacters;
+            NumberOfCharactersInTarget = state.NumberOfCharactersInTarget;
+            PlayerName = state.PlayerName;
             Target = state.Target;
             this.guesses = state.Guesses.ToList();
         }
@@ -76,7 +90,7 @@ namespace MyNaiveGameEngine
         /// <param name="guess"></param>
         /// <returns>True if guess succeeded.</returns>
         public bool Guess(string guess) {
-            var paddedGuess = (guess ?? "").PadRight(numberOfCharactersInTarget).Substring(0, numberOfCharactersInTarget);
+            var paddedGuess = (guess ?? "").PadRight(NumberOfCharactersInTarget).Substring(0, NumberOfCharactersInTarget);
             this.guesses.Add(paddedGuess);
             return Success;
         }
@@ -86,8 +100,8 @@ namespace MyNaiveGameEngine
         /// </summary>
         public void GenerateTarget(){
             // Split the string with allowed characters into a hashset.
-            var allowedItems = allowedCharacters.Select(i => i.ToString()).ToHashSet();
-            var randomizedItems = Helpers.RandomSelection(numberOfCharactersInTarget, allowedItems) ?? new List<string>();
+            var allowedItems = AllowedCharacters.Select(i => i.ToString()).ToHashSet();
+            var randomizedItems = Helpers.RandomSelection(NumberOfCharactersInTarget, allowedItems) ?? new List<string>();
             Target = string.Join("", randomizedItems);
         }
 
