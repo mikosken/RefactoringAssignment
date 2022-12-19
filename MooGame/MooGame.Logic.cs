@@ -4,7 +4,7 @@ namespace MyNaiveGameEngine
     {
         public void DisplayState()
         {
-            _consoleIO.WriteLine(this.state.ToString() + "\n");
+            _gameIO.WriteLine(this.state.ToString() + "\n");
         }
 
         private void DisplayToplist() {
@@ -15,7 +15,7 @@ namespace MyNaiveGameEngine
 			Console.WriteLine("Player   games average");
 			foreach (PlayerData pd in toplist)
 			{
-                _consoleIO.WriteLine(pd.ToString("{NAME,-9}{GAMECOUNT,5:D}{AVERAGE,9:F2}"));
+                _gameIO.WriteLine(pd.ToString("{NAME,-9}{GAMECOUNT,5:D}{AVERAGE,9:F2}"));
 			}
         }
 

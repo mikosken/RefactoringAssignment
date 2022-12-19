@@ -43,6 +43,11 @@ Continue?
 n
 ```
 
+### Game manager
+
+A game manager was implemented to handle selection of games, if multiple games
+are implemented, and for restarting games if the player wishes to continue.
+
 ### Game Class and Game Loop
 
 Originally the game logic was intertwined with the game loop.

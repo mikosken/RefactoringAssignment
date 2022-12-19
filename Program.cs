@@ -19,28 +19,16 @@ namespace Game
                 .AddJsonFile("appSettings.json", false)
                 .Build();
             
-            var serviceProvider = new ServiceCollection()
+            var services = new ServiceCollection()
                 .AddSingleton<IConfiguration>(configuration)
-                .AddSingleton<IConsoleIO, ConsoleIO>()
+                .AddSingleton<IGameIO, ConsoleGameIO>()
                 .AddTransient<IScoreStore, FileScoreStore>()
-                .AddTransient<MooGame>()
+                .AddTransient<MooGame>();
+            var serviceProvider = services
                 .BuildServiceProvider();
 
-			bool playOn = true;
-
-			while (playOn)
-			{
-                var game = serviceProvider.GetService<MooGame>();
-                game.Run();
-                var nGuess = ((MooGameState)game.GetState()).TryCountOnFirstSuccess;
-
-				Console.WriteLine("Correct, it took " + nGuess + " guesses\nContinue?");
-				string answer = Console.ReadLine();
-				if (answer != null && answer != "" && answer.Substring(0, 1) == "n")
-				{
-					playOn = false;
-				}
-			}
+            var gameManager = new GameManager(serviceProvider, services);
+            gameManager.Run();
 		}
 	}
 }

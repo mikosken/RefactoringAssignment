@@ -10,12 +10,12 @@ namespace MyNaiveGameEngine
         private readonly string configSection = "MooGame";
         private readonly MooGameConfiguration _config = new MooGameConfiguration();
         private readonly IScoreStore _scoreStore;
-        private readonly IConsoleIO _consoleIO;
+        private readonly IGameIO _gameIO;
         private MooGameState state = new MooGameState();
 
-        public MooGame(IConsoleIO consoleIO, IScoreStore scoreStore, IConfiguration configuration)
+        public MooGame(IGameIO gameIO, IScoreStore scoreStore, IConfiguration configuration)
         {
-            _consoleIO = consoleIO;
+            _gameIO = gameIO;
             _scoreStore = scoreStore;
             configuration.GetSection(configSection).Bind(_config);
 
@@ -45,18 +45,18 @@ namespace MyNaiveGameEngine
         /// </summary>
         public void FirstStep()
         {
-            _consoleIO.WriteLine("Enter your user name:\n");
-			this.state.PlayerName = _consoleIO.ReadLine();
+            _gameIO.WriteLine("Enter your user name:\n");
+			this.state.PlayerName = _gameIO.ReadLine();
 
-            _consoleIO.WriteLine("New game:\n");
+            _gameIO.WriteLine("New game:\n");
             if(_config.PracticeMode)
-                _consoleIO.WriteLine("For practice, number is: " + state.Target + "\n");
+                _gameIO.WriteLine("For practice, number is: " + state.Target + "\n");
             else
-                _consoleIO.WriteLine($"Guess the string. It contains {state.NumberOfCharactersInTarget} unique characters from '{state.AllowedCharacters}'.");
+                _gameIO.WriteLine($"Guess the string. It contains {state.NumberOfCharactersInTarget} unique characters from '{state.AllowedCharacters}'.");
 
             // In the original code the first run does not echo back input.
             // That's why we have an initial round outside the while loop.
-            var input = _consoleIO.ReadLine();
+            var input = _gameIO.ReadLine();
             this.state.Guess(input);
             DisplayState();
         }
@@ -66,8 +66,8 @@ namespace MyNaiveGameEngine
         /// </summary>
         public void Step()
         {
-            var input = _consoleIO.ReadLine();
-            _consoleIO.WriteLine(input + "\n");
+            var input = _gameIO.ReadLine();
+            _gameIO.WriteLine(input + "\n");
             this.state.Guess(input);
             DisplayState();
         }
@@ -79,6 +79,8 @@ namespace MyNaiveGameEngine
         {
             SaveScore();
             DisplayToplist();
+
+            Console.WriteLine("Correct, it took " + state.TryCountOnFirstSuccess + " guesses");
         }
 
         /// <summary>
