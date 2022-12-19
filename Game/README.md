@@ -4,18 +4,18 @@ The code in this repository is based on an assignment in refactoring and code sm
 
 ## Refactoring changes and reasoning
 
-### Notes on original code.
-
 ### Files and folders.
 
 The solution is split into two projects, Game and GameTest.
 
-The Game code was split in three separate subfolders:
+The Game code was split in four separate subfolders:
 
 -   Interfaces
 -   Common: For the game manager, and classes that are likely to be shared
     between multiple games.
 -   MooGame: The refactored game.
+-   MastermindGame: A modified implementation of MooGame, but still using the
+    same interfaces.
 
 ### Dependency Injection
 
@@ -31,48 +31,33 @@ package, create a service provider, and add all dependencies to the service
 provider. The service provider then takes care of handling which dependency
 goes where.
 
-Dependencies are added with differing scopes:
-
--   Singleton: After initializing the requested dependency once it's kept in
-    memory and reused until the application shuts down.
--   Scoped: A new instance of the dependency is created every time a new scope
-    is created. (Create new scope, get new service provider from scope, get
-    dependency from service provider.)
--   Transient: A new instance of the dependency is created every time that
-    dependency is requested.
-
 ### Game manager
 
-A game manager was implemented to handle selection of games, if multiple games
-are implemented, and for restarting games if the player wishes to continue.
+A very simple game manager was implemented to handle selection of games, if
+multiple games are implemented, and for restarting games if the player wishes to
+continue.
+
+The player is prompted to select between games at startup and after a completed
+round of the selected game.
 If only one game is implemented it is started immediately without prompting the
 user for a choice.
 
 ### Game Class and Game Loop
 
-Originally the game logic was intertwined with the game loop.
-
-A game usually has:
-
--   a state
--   accepts/requests input
--   continues from one state to the next
-
-Displaying the state and retrieving input should be separated from the main game
-logic using dependency injection.
+Originally the game logic was intertwined with the program logic and flow
+control, but through refactoring the main game logic, game state, Input/Output,
+File handling, and game management was separated.
 
 By putting the game logic into it's own class with a defined interface, `IGame`,
-a new game can easily be instantiated, and it can also be swapped with a
-different game using the same interface. By being able to swap different games
-with the same interface it could be considered to use the Strategy design
-pattern.
+a new game can easily be instantiated, and other games can be implemented
+using the same interface.
 
-The game class was then split into two partial classes.
+The game class was also split into two partial classes.
 
--   `BullsAndCowsGame.cs` contains more abstract and high level code
+-   `MooGame.cs` contains more abstract and slightly higher level code
     as defined by the `IGame` interface.
--   `BullsAndCowsGame.Logic.cs` contains slightly less abstract code dealing
-    with supporting classes and services.
+-   `MooGame.Logic.cs` contains slightly less abstract code dealing with
+    internal game logic and display.
 
 ### Game settings
 
@@ -80,6 +65,12 @@ Game settings were implemented using `Microsoft.Extensions.Configuration`,
 which enables injecting `IConfiguration`.
 The game classes contain default values for properties, but these are overridden
 by the settings in `appSettings.json`.
+
+To switch the games from practice mode to live mode, open `appSettings.json` and
+change the setting "PracticeMode" to false.
+
+It's also possible to adjust the difficulty of the games in settings by changing
+allowed characters and length of target string.
 
 ### Game IO / Wrapping System.Console
 
@@ -95,11 +86,11 @@ it would likely be easier to replace with JSON files, or with a small DB and use
 Entity Framework.
 
 The result is an interface for saving/loading scores `IScoreStore`.
-`IScoreStore` is implemented as `FileScoreStore`, that reads and writes a
-file.
+`IScoreStore` is implemented as `FileScoreStore`, that reads and writes to a
+text file.
 
 The original class `PlayerData` was moved to a separate file. The original
-funtionality was kept but some properties were renamed and the field `totalGuess`
+funtionality was kept, but some properties were renamed and the field `totalGuess`
 was replaced by the property `TotalGuessCount`, and an additional constructor
 was added to directly initialize the properties.
 `ToString(string format)` was also added for convenience.
@@ -108,28 +99,37 @@ To calculate statistics in the form of a list of `PlayerData`, an extension
 method called `ToToplist()` for `List<PlayerScore>` was added to a static class
 called `ToplistExtensions`.
 
-## Testing
+### Testing
 
-A separate project for testing named GameTest was used.
+A separate project for testing using the mstest package was created, called
+`GameTest`.
 
 To enable testing of MooGame mock implementations were required for IGameIO and
-IScoreStore. In addition in-memory configuration was used to enable specifying
+IScoreStore. In-memory configuration was used to enable specifying
 appsettings during test initialization.
 
-## Implementing new games
+Tests were created for MooGame, MooGameState, PlayerData, and PlayerScore.
+
+### Implementing new games
 
 By having a well defined game interface, and a game manager that automatically
 detects new injected games, it's easy to add new games.
 
-1. Implement IGame/IGameState, a configuration class if needed and add to
+1. Create a new subfolder for the game to keep the files separate.
+2. Implement IGame/IGameState, a configuration class if needed and add to
    appsettings.
-2. Inject new game implementation in Program.cs.
-3. Done!
+3. Inject new game implementation in Program.cs.
+4. Done!
 
-## An example run
+Using this methodology MastermindGame was implemented with nearly identical
+game logic as MooGame, but target generation was changed to allow repeated
+characters.
+
+### An example run
 
 Here is an example run of the original program, and the refactored version
-is functionally indistinguishable.
+is functionally indistinguishable when only MooGame is injected in program.cs.
+If more games are injected then a select menu appears between game rounds.
 
 My comments are preceeded by #.
 
