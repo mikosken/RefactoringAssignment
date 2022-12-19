@@ -80,7 +80,7 @@ namespace MyNaiveGameEngine
             SaveScore();
             DisplayToplist();
 
-            Console.WriteLine("Correct, it took " + state.TryCountOnFirstSuccess + " guesses");
+            _gameIO.WriteLine("Correct, it took " + state.TryCountOnFirstSuccess + " guesses");
         }
 
         /// <summary>

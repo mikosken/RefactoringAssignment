@@ -12,7 +12,7 @@ namespace MyNaiveGameEngine
             var toplist = _scoreStore.Scores.ToToplist();
 
             toplist.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
-			Console.WriteLine("Player   games average");
+			_gameIO.WriteLine("Player   games average");
 			foreach (PlayerData pd in toplist)
 			{
                 _gameIO.WriteLine(pd.ToString("{NAME,-9}{GAMECOUNT,5:D}{AVERAGE,9:F2}"));

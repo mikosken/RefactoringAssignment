@@ -32,10 +32,9 @@ namespace MyNaiveGameEngine
         void LastStep();
 
         /// <summary>
-        /// Returns the current state of the game. It is up to the
-        /// displayManager to figure out how to display it.
+        /// Returns the current state of the game.
         /// </summary>
-        /// <returns><c>T</c> may be a game specific state representation.</returns>
+        /// <returns>IGameState is a marker interface. May be a game specific state implementation.</returns>
         IGameState GetState();
 
         /// <summary>
