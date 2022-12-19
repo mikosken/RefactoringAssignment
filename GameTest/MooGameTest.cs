@@ -79,7 +79,6 @@ namespace GameTest
             // Finally test LastStep()
             _mooGame.LastStep();
             Assert.AreEqual("Correct, it took 2 guesses", _gameIO.WrittenLines.Last());
-
         }
     }
 }

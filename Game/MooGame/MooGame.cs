@@ -45,14 +45,8 @@ namespace MyNaiveGameEngine
         /// </summary>
         public void FirstStep()
         {
-            _gameIO.WriteLine("Enter your user name:\n");
-			this.state.PlayerName = _gameIO.ReadLine();
-
-            _gameIO.WriteLine("New game:\n");
-            if(_config.PracticeMode)
-                _gameIO.WriteLine("For practice, number is: " + state.Target + "\n");
-            else
-                _gameIO.WriteLine($"Guess the string. It contains {state.NumberOfCharactersInTarget} unique characters from '{state.AllowedCharacters}'.");
+            SetUsername();
+            DisplayStartupInfo();
 
             // In the original code the first run does not echo back input.
             // That's why we have an initial round outside the while loop.
