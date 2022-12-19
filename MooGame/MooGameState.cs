@@ -1,6 +1,6 @@
 namespace MyNaiveGameEngine
 {
-    public class BullsAndCowsGameState : IGameState
+    public class MooGameState : IGameState
     {
         public string AllowedCharacters { get; private set; } = "1234567890";
         public int NumberOfCharactersInTarget { get; private set; } = 4;
@@ -15,7 +15,7 @@ namespace MyNaiveGameEngine
         /// <summary>
         /// Initializes a new game of Bulls and Cows.
         /// </summary>
-        public BullsAndCowsGameState()
+        public MooGameState()
         {
             GenerateTarget();
         }
@@ -23,7 +23,7 @@ namespace MyNaiveGameEngine
         /// <summary>
         /// Initializes a new game of Bulls and Cows with custom settings.
         /// </summary>
-        public BullsAndCowsGameState(string allowedCharacters, int numberOfCharactersInTarget)
+        public MooGameState(string allowedCharacters, int numberOfCharactersInTarget)
         {
             AllowedCharacters = allowedCharacters;
             NumberOfCharactersInTarget = numberOfCharactersInTarget;
@@ -34,7 +34,7 @@ namespace MyNaiveGameEngine
         /// Use this constructor to load an existing gamestate.
         /// </summary>
         /// <param name="state"></param>
-        public BullsAndCowsGameState(BullsAndCowsGameState state)
+        public MooGameState(MooGameState state)
         {
             AllowedCharacters = state.AllowedCharacters;
             NumberOfCharactersInTarget = state.NumberOfCharactersInTarget;

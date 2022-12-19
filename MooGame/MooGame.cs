@@ -3,17 +3,17 @@ using Microsoft.Extensions.Configuration;
 namespace MyNaiveGameEngine
 {
 
-    public partial class BullsAndCowsGame : IGame
+    public partial class MooGame : IGame
     {
         // Settings. Move to GameState instead?
         // Create settings class and move to appsettings instead?
         private readonly string configSection = "MooGame";
-        private readonly BullsAndCowsGameConfiguration _config = new BullsAndCowsGameConfiguration();
+        private readonly MooGameConfiguration _config = new MooGameConfiguration();
         private readonly IScoreStore _scoreStore;
         private readonly IConsoleIO _consoleIO;
-        private BullsAndCowsGameState state = new BullsAndCowsGameState();
+        private MooGameState state = new MooGameState();
 
-        public BullsAndCowsGame(IConsoleIO consoleIO, IScoreStore scoreStore, IConfiguration configuration)
+        public MooGame(IConsoleIO consoleIO, IScoreStore scoreStore, IConfiguration configuration)
         {
             _consoleIO = consoleIO;
             _scoreStore = scoreStore;
@@ -87,16 +87,16 @@ namespace MyNaiveGameEngine
         public void Initialize()
         {
             // Note, Initialize() clears all state.
-            this.state = new BullsAndCowsGameState(_config.AllowedCharacters, _config.NumberOfCharactersInTarget);
+            this.state = new MooGameState(_config.AllowedCharacters, _config.NumberOfCharactersInTarget);
             return;
         }
 
         public void LoadState(IGameState state)
         {
-            if (state is BullsAndCowsGameState)
-                this.state = new BullsAndCowsGameState((BullsAndCowsGameState)state);
+            if (state is MooGameState)
+                this.state = new MooGameState((MooGameState)state);
             else
-                throw new ArgumentException($"'state' should be of type {typeof(BullsAndCowsGameState)}");
+                throw new ArgumentException($"'state' should be of type {typeof(MooGameState)}");
         }
     }
 }

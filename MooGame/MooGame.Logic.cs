@@ -1,6 +1,6 @@
 namespace MyNaiveGameEngine
 {
-    public partial class BullsAndCowsGame
+    public partial class MooGame
     {
         public void DisplayState()
         {

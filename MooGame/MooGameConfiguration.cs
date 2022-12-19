@@ -1,6 +1,6 @@
 namespace MyNaiveGameEngine
 {
-    public class BullsAndCowsGameConfiguration
+    public class MooGameConfiguration
     {
         public string ScoreFile { get; set; } = "result.txt";
         public string AllowedCharacters { get; set; } = "1234567890";

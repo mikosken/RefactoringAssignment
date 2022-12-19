@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyNaiveGameEngine;
 using Microsoft.Extensions.Configuration;
 
-namespace MooGame
+namespace Game
 {
 	class MainClass
 	{
@@ -23,16 +23,16 @@ namespace MooGame
                 .AddSingleton<IConfiguration>(configuration)
                 .AddSingleton<IConsoleIO, ConsoleIO>()
                 .AddTransient<IScoreStore, FileScoreStore>()
-                .AddTransient<BullsAndCowsGame>()
+                .AddTransient<MooGame>()
                 .BuildServiceProvider();
 
 			bool playOn = true;
 
 			while (playOn)
 			{
-                var game = serviceProvider.GetService<BullsAndCowsGame>();
+                var game = serviceProvider.GetService<MooGame>();
                 game.Run();
-                var nGuess = ((BullsAndCowsGameState)game.GetState()).TryCountOnFirstSuccess;
+                var nGuess = ((MooGameState)game.GetState()).TryCountOnFirstSuccess;
 
 				Console.WriteLine("Correct, it took " + nGuess + " guesses\nContinue?");
 				string answer = Console.ReadLine();
