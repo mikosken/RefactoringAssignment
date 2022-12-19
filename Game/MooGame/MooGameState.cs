@@ -71,8 +71,11 @@ namespace MyNaiveGameEngine
         {
             get
             {
-                var triesBeforeCorrect = Guesses.TakeWhile(t => !(t == Target)).Count();
-                return triesBeforeCorrect + 1;
+                if (Success) {
+                    var triesBeforeCorrect = Guesses.TakeWhile(t => !(t == Target)).Count();
+                    return triesBeforeCorrect + 1;
+                }
+                return 0;
             }
         }
 
