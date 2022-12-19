@@ -19,14 +19,6 @@ namespace MyNaiveGameEngine
         {
         }
 
-        public override string ToString()
-        {
-            (var bulls, var cows) = CheckBullsAndCows();
-            var b = new String('B', bulls);
-            var c = new String('C', cows);
-            return $"{b},{c}";
-        }
-
         /// <summary>
         /// Use this constructor to load an existing gamestate.
         /// </summary>
@@ -37,6 +29,13 @@ namespace MyNaiveGameEngine
             this.guesses = state.Guesses.ToList();
         }
 
+        public override string ToString()
+        {
+            (var bulls, var cows) = CheckBullsAndCows();
+            var b = new String('B', bulls);
+            var c = new String('C', cows);
+            return $"{b},{c}";
+        }
 
         /// <summary>
         /// True if end condition has been met.

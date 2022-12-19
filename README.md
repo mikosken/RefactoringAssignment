@@ -62,6 +62,13 @@ different game using the same interface. By being able to swap different games
 with the same interface it could be considered to use the Strategy design
 pattern.
 
+The game class was then split into two partial classes.
+
+-   `BullsAndCowsGame.cs` contains very abstract and high level code
+    as defined by the `IGame` interface.
+-   `BullsAndCowsGame.Logic.cs` contains slightly less abstract code dealing
+    with supporting classes and services.
+
 ### Wrapping System.Console
 
 To make console input and output testable, as well as enable dependency

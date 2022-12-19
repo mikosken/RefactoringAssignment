@@ -15,28 +15,21 @@ namespace MyNaiveGameEngine
         void LoadState(IGameState state);
 
         /// <summary>
-        /// Run the game for one game step, changes game state.
-        /// Always call after giving input to game to see effects.
+        /// Run the game for one game step.
+        /// Only called once.
+        /// </summary>
+        void FirstStep();
+
+        /// <summary>
+        /// Run the game for one game step.
         /// </summary>
         void Step();
 
         /// <summary>
-        /// Add new input proactively. It is up to the game implementation to determine if
-        /// multiple inputs can be queued, or if only the last input is used
-        /// upon Step().
+        /// Run the game for one game step.
+        /// Only called once.
         /// </summary>
-        /// <param name="input"></param>
-        void AddInput(string input);
-
-        /// <summary>
-        /// Ask user actively for input.
-        /// </summary>
-        void GetInput();
-
-        /// <summary>
-        /// Show the current state to the user.
-        /// </summary>
-        void DisplayState();
+        void LastStep();
 
         /// <summary>
         /// Returns the current state of the game. It is up to the
@@ -49,11 +42,5 @@ namespace MyNaiveGameEngine
         /// Starts the game loop.
         /// </summary>
         void Run();
-
-        /// <summary>
-        /// Displays the high score.
-        /// </summary>
-        void DisplayHighscore();
-
     }
 }
