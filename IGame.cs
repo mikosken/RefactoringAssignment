@@ -49,5 +49,11 @@ namespace MyNaiveGameEngine
         /// Starts the game loop.
         /// </summary>
         void Run();
+
+        /// <summary>
+        /// Displays the high score.
+        /// </summary>
+        void DisplayHighscore();
+
     }
 }

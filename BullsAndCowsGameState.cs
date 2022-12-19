@@ -2,11 +2,15 @@ namespace MyNaiveGameEngine
 {
     public class BullsAndCowsGameState : IGameState
     {
+        private readonly string allowedCharacters = "1234567890";
+        private readonly int numberOfCharactersInTarget = 4;
 
         // See property Guesses for external access.
         private List<string> guesses = new List<string>();
         
         public string Target { get; set; } = "";
+
+        public string PlayerName { get; set; } = "";
 
         /// <summary>
         /// Initializes a new game of Bulls and Cows.
@@ -73,8 +77,19 @@ namespace MyNaiveGameEngine
         /// <param name="guess"></param>
         /// <returns>True if guess succeeded.</returns>
         public bool Guess(string guess) {
-            this.guesses.Add(guess);
+            var paddedGuess = (guess ?? "").PadRight(numberOfCharactersInTarget).Substring(0, numberOfCharactersInTarget);
+            this.guesses.Add(paddedGuess);
             return Success;
+        }
+
+        /// <summary>
+        /// Generates and sets a new target string.
+        /// </summary>
+        public void GenerateTarget(){
+            // Split the string with allowed characters into a hashset.
+            var allowedItems = allowedCharacters.Select(i => i.ToString()).ToHashSet();
+            var randomizedItems = Helpers.RandomSelection(numberOfCharactersInTarget, allowedItems) ?? new List<string>();
+            Target = string.Join("", randomizedItems);
         }
 
         /// <summary>

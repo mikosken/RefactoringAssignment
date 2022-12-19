@@ -8,16 +8,18 @@ namespace MyNaiveGameEngine
 
     public class BullsAndCowsGame : IGame
     {
-        private readonly string allowedCharacters = "1234567890";
-        private readonly int numberOfCharactersInTarget = 4;
-        private readonly int maxCharactersInInput = 4;
+        // Settings. Move to GameState instead?
+        // Create settings class and move to appsettings instead?
+        private readonly string scoreFile = "result.txt";
+        private readonly IScoreStore _scoreStore;
         private readonly IConsoleIO _consoleIO;
         private BullsAndCowsGameState state = new BullsAndCowsGameState();
         private string latestInput = "";
 
-        public BullsAndCowsGame(IConsoleIO consoleIO)
+        public BullsAndCowsGame(IConsoleIO consoleIO, IScoreStore scoreStore)
         {
             _consoleIO = consoleIO;
+            _scoreStore = scoreStore;
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace MyNaiveGameEngine
         /// <param name="input"></param>
         public void AddInput(string input)
         {
-            latestInput = (input ?? "").PadRight(maxCharactersInInput).Substring(0,maxCharactersInInput);
+            latestInput = input;
         }
 
         public IGameState GetState()
@@ -50,11 +52,7 @@ namespace MyNaiveGameEngine
         {
             // Note, Initialize() clears all state.
             this.state = new BullsAndCowsGameState();
-
-            // Split the string with allowed characters into a hashset.
-            var allowedItems = allowedCharacters.Select(i => i.ToString()).ToHashSet();
-            var randomizedItems = Helpers.RandomSelection(numberOfCharactersInTarget, allowedItems) ?? new List<string>();
-            this.state.Target = string.Join("", randomizedItems);
+            this.state.GenerateTarget();
             return;
         }
 
@@ -76,24 +74,53 @@ namespace MyNaiveGameEngine
             _consoleIO.WriteLine(this.state.ToString() + "\n");
         }
 
+        public void SaveScore() {
+            _scoreStore.LoadScores(scoreFile);
+            var playerScore = new PlayerScore(this.state.PlayerName, this.state.TryCountOnFirstSuccess);
+            _scoreStore.AddScore(playerScore);
+            _scoreStore.SaveScores(scoreFile);
+        }
+        public void DisplayToplist() {
+            _scoreStore.LoadScores(scoreFile);
+            var toplist = _scoreStore.Scores.ToToplist();
+
+            toplist.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
+			Console.WriteLine("Player   games average");
+			foreach (PlayerData pd in toplist)
+			{
+                _consoleIO.WriteLine(pd.ToString("{NAME,-9}{GAMECOUNT,5:D}{AVERAGE,9:F2}"));
+			}
+        }
+
         public void Run()
         {
+            Console.WriteLine("Enter your user name:\n");
+			this.state.PlayerName = _consoleIO.ReadLine();
+
             _consoleIO.WriteLine("New game:\n");
             //comment out or remove next line to play real games!
             _consoleIO.WriteLine("For practice, number is: " + state.Target + "\n");
             // In the original code the first run does not echo back input.
             // That's why we have an initial round outside the while loop.
-            (this as IGame).GetInput();
-            (this as IGame).Step();
-            (this as IGame).DisplayState();
+            GetInput();
+            Step();
+            DisplayState();
 
             while (!this.state.Success)
             {
-                (this as IGame).GetInput();
+                GetInput();
                 _consoleIO.WriteLine(latestInput + "\n");
-                (this as IGame).Step();
-                (this as IGame).DisplayState();
+                Step();
+                DisplayState();
             }
+
+            SaveScore();
+            DisplayToplist();
+        }
+
+        public void DisplayHighscore()
+        {
+            throw new NotImplementedException();
         }
     }
 }

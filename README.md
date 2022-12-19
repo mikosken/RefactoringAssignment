@@ -58,12 +58,35 @@ logic using dependency injection.
 
 By putting the game logic into it's own class with a defined interface, `IGame`,
 a new game can easily be instantiated, and it can also be swapped with a
-different game using the same interface.
+different game using the same interface. By being able to swap different games
+with the same interface it could be considered to use the Strategy design
+pattern.
 
 ### Wrapping System.Console
 
 To make console input and output testable, as well as enable dependency
 injection of the console IO, a wrapper interface was created: `IConsoleIO`.
+
+### File handling / high score handling
+
+As the existing game already had a set file format for saving scores, the format
+was kept for compatibility purposes. Although if compatibility wasn't an issue
+it would likely be easier to replace with JSON files, or with a small DB and use
+Entity Framework.
+
+The result is an interface for saving/loading scores `IScoreStore`.
+`IScoreStore` is implemented as `FileScoreStore`, that reads and writes a
+file.
+
+The original class `PlayerData` was moved to a separate file. The original
+funtionality was kept but some properties were renamed and the field `totalGuess`
+was replaced by the property `TotalGuessCount`, and an additional constructor
+was added to directly initialize the properties.
+`ToString(string format)` was also added for convenience.
+
+To calculate statistics in the form of a list of `PlayerData`, an extension
+method called `ToToplist()` for `List<PlayerScore>` was added to a static class
+called `ToplistExtensions`.
 
 ### Dependency Injection
 
@@ -120,3 +143,4 @@ Inspiration, code snippets, etc.
 
 -   [Example](https://example.com/)
 -   [Using dependency injection in a dotNet Core Console App](https://andrewlock.net/using-dependency-injection-in-a-net-core-console-application/)
+-   [C# - How to unit test code that reads and writes to the console](https://makolyte.com/csharp-how-to-unit-test-code-that-reads-and-writes-to-the-console/)
