@@ -6,46 +6,11 @@ The code in this repository is based on an assignment in refactoring and code sm
 
 ### Notes on original code.
 
-#### An example run
-
-My comments are preceeded by #
-
-```
-Enter your user name:
-
-John Smith
-New game:
-
-For practice, number is: 3178
-
-2       # First input.
-,       # Nothing correct.
-
-1234    # Second input
-1234    # Note that after the first input the input is echoed back.
-
-,CC     # Two numbers correct, in wrong places.
-
-1111
-1111
-
-B,CCC   # One of the 1 is in the correct spot.
-
-3178
-3178
-
-BBBB,
-
-Player   games average
-John Smith    1     4,00
-Correct, it took 4 guesses
-Continue?
-n
-```
-
 ### Files and folders.
 
-The final refactored code was split in three separate subfolders:
+The solution is split into two projects, Game and GameTest.
+
+The Game code was split in three separate subfolders:
 
 -   Interfaces
 -   Common: For the game manager, and classes that are likely to be shared
@@ -104,7 +69,7 @@ pattern.
 
 The game class was then split into two partial classes.
 
--   `BullsAndCowsGame.cs` contains very abstract and high level code
+-   `BullsAndCowsGame.cs` contains more abstract and high level code
     as defined by the `IGame` interface.
 -   `BullsAndCowsGame.Logic.cs` contains slightly less abstract code dealing
     with supporting classes and services.
@@ -143,6 +108,54 @@ To calculate statistics in the form of a list of `PlayerData`, an extension
 method called `ToToplist()` for `List<PlayerScore>` was added to a static class
 called `ToplistExtensions`.
 
+## Testing
+
+A separate project for testing named GameTest was used.
+
+To enable testing of MooGame mock implementations were required for IGameIO and
+IScoreStore. In addition in-memory configuration was used to enable specifying
+appsettings during test initialization.
+
+## An example run
+
+Here is an example run of the original program, and the refactored version
+is functionally indistinguishable.
+
+My comments are preceeded by #.
+
+```
+Enter your user name:
+
+John Smith
+New game:
+
+For practice, number is: 3178
+
+2       # First input.
+,       # Nothing correct.
+
+1234    # Second input
+1234    # Note that after the first input the input is echoed back.
+
+,CC     # Two numbers correct, in wrong places.
+
+1111
+1111
+
+B,CCC   # One of the 1 is in the correct spot.
+
+3178
+3178
+
+BBBB,
+
+Player   games average
+John Smith    1     4,00
+Correct, it took 4 guesses
+Continue?
+n
+```
+
 ## Getting Started
 
 To try out this project or continue development try this:
@@ -168,6 +181,6 @@ dotnet watch run
 
 Inspiration, code snippets, etc.
 
--   [Example](https://example.com/)
 -   [Using dependency injection in a dotNet Core Console App](https://andrewlock.net/using-dependency-injection-in-a-net-core-console-application/)
 -   [C# - How to unit test code that reads and writes to the console](https://makolyte.com/csharp-how-to-unit-test-code-that-reads-and-writes-to-the-console/)
+-   [Test a .NET class library using Visual Studio Code](https://learn.microsoft.com/en-us/dotnet/core/tutorials/testing-library-with-visual-studio-code?pivots=dotnet-7-0)
