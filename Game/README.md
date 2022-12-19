@@ -116,6 +116,16 @@ To enable testing of MooGame mock implementations were required for IGameIO and
 IScoreStore. In addition in-memory configuration was used to enable specifying
 appsettings during test initialization.
 
+## Implementing new games
+
+By having a well defined game interface, and a game manager that automatically
+detects new injected games, it's easy to add new games.
+
+1. Implement IGame/IGameState, a configuration class if needed and add to
+   appsettings.
+2. Inject new game implementation in Program.cs.
+3. Done!
+
 ## An example run
 
 Here is an example run of the original program, and the refactored version

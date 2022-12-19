@@ -3,15 +3,15 @@ using Microsoft.Extensions.Configuration;
 namespace MyNaiveGameEngine
 {
 
-    public partial class MooGame : IGame
+    public partial class MastermindGame : IGame
     {
-        private readonly string configSection = "MooGame";
-        private readonly MooGameConfiguration _config = new MooGameConfiguration();
+        private readonly string configSection = "MastermindGame";
+        private readonly MastermindGameConfiguration _config = new MastermindGameConfiguration();
         private readonly IScoreStore _scoreStore;
         private readonly IGameIO _gameIO;
-        private MooGameState state = new MooGameState();
+        private MastermindGameState state = new MastermindGameState();
 
-        public MooGame(IGameIO gameIO, IScoreStore scoreStore, IConfiguration configuration)
+        public MastermindGame(IGameIO gameIO, IScoreStore scoreStore, IConfiguration configuration)
         {
             _gameIO = gameIO;
             _scoreStore = scoreStore;
@@ -81,16 +81,16 @@ namespace MyNaiveGameEngine
         public void Initialize()
         {
             // Note, Initialize() clears all state.
-            this.state = new MooGameState(_config.AllowedCharacters, _config.NumberOfCharactersInTarget);
+            this.state = new MastermindGameState(_config.AllowedCharacters, _config.NumberOfCharactersInTarget);
             return;
         }
 
         public void LoadState(IGameState state)
         {
-            if (state is MooGameState)
-                this.state = new MooGameState((MooGameState)state);
+            if (state is MastermindGameState)
+                this.state = new MastermindGameState((MastermindGameState)state);
             else
-                throw new ArgumentException($"'state' should be of type {typeof(MooGameState)}");
+                throw new ArgumentException($"'state' should be of type {typeof(MastermindGameState)}");
         }
     }
 }

@@ -23,7 +23,8 @@ namespace Game
                 .AddSingleton<IConfiguration>(configuration)
                 .AddSingleton<IGameIO, ConsoleGameIO>()
                 .AddTransient<IScoreStore, FileScoreStore>()
-                .AddTransient<MooGame>();
+                .AddTransient<MooGame>()
+                .AddTransient<MastermindGame>();
             var serviceProvider = services
                 .BuildServiceProvider();
 

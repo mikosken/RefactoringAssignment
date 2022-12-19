@@ -27,22 +27,24 @@ namespace MyNaiveGameEngine
 
         public void LoadScores(string storage)
         {
-            using (var fileStream = new StreamReader(storage))
-            {
-                var loadedScores = new List<PlayerScore>();
-                string? line;
+            if (File.Exists(storage)) {
+                using (var fileStream = new StreamReader(storage))
+                {
+                    var loadedScores = new List<PlayerScore>();
+                    string? line;
 
-                while((line = fileStream.ReadLine()) != null) {
-                    string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
-                    // Sanity check.
-                    if (nameAndScore.Length == 2
-                        && int.TryParse(nameAndScore[1], out int score))
-                    {
-                        var ps = new PlayerScore(nameAndScore[0], score);
-                        loadedScores.Add(ps);
+                    while((line = fileStream.ReadLine()) != null) {
+                        string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
+                        // Sanity check.
+                        if (nameAndScore.Length == 2
+                            && int.TryParse(nameAndScore[1], out int score))
+                        {
+                            var ps = new PlayerScore(nameAndScore[0], score);
+                            loadedScores.Add(ps);
+                        }
                     }
+                    Scores = loadedScores;
                 }
-                Scores = loadedScores;
             }
         }
 
