@@ -2,6 +2,8 @@
 
 The code in this repository is based on an assignment in refactoring and code smells.
 
+The original program is named `Program.unrefactored_original.cs`.
+
 ## Refactoring changes and reasoning
 
 ### Files and folders.
@@ -30,6 +32,16 @@ A standard approach is to use the `Microsoft.Extensions.DependencyInjection`
 package, create a service provider, and add all dependencies to the service
 provider. The service provider then takes care of handling which dependency
 goes where.
+
+Dependencies are added with differing scopes:
+
+-   Singleton: After initializing the requested dependency once it's kept in
+    memory and reused until the application shuts down.
+-   Scoped: A new instance of the dependency is created every time a new scope
+    is created. (Create new scope, get new service provider from scope, get
+    dependency from service provider.)
+-   Transient: A new instance of the dependency is created every time that
+    dependency is requested.
 
 ### Game manager
 
@@ -179,7 +191,7 @@ console:
 ```
 cd .\suitable\project\folder
 git clone <address_to_this_repo>
-cd ".\RefactoringAssignment"
+cd ".\RefactoringAssignment\Game"
 code .
 ```
 
@@ -188,6 +200,12 @@ To build and run enter in console:
 ```
 dotnet build
 dotnet watch run
+```
+
+To run tests, cd to `\GameTest` and run:
+
+```
+dotnet test
 ```
 
 ## References
